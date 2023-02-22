@@ -1,0 +1,13 @@
+[package]
+name = "roaring-rb"
+version = "0.1.0"
+edition = "2021"
+authors = ["Chris Yammine <chris@yammine.dev>"]
+publish = false
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+magnus = { version = "0.4" }
+roaring = "0.10.1"
