@@ -4,7 +4,9 @@ use std::{
     ops::{BitOrAssign, SubAssign},
 };
 
-use magnus::{define_module, function, method, prelude::*, Error};
+use magnus::{
+    define_module, function, method, prelude::*, scan_args::scan_args, Error, RArray, Value,
+};
 use roaring::RoaringBitmap;
 
 struct Wrapper {
@@ -31,6 +33,13 @@ impl MutWrapper {
     /// Inserts an item into the bitmap. Returns true if the item was not already present, false otherwise.
     fn insert(&self, item: u32) -> Result<bool, Error> {
         Ok(self.0.borrow_mut()._data.insert(item))
+    }
+
+    /// Inserts multiple items into the bitmap.
+    fn insert_many(&self, items: &[Value]) -> Result<(), Error> {
+        let args = scan_args::<(), (), RArray, (), (), ()>(items)?;
+        let values = args.splat.to_vec::<u32>().unwrap();
+        Ok(self.0.borrow_mut()._data.extend(values))
     }
 
     /// Removes an item from the bitmap. Returns true if the item was present, false otherwise.
@@ -166,6 +175,11 @@ impl MutWrapper {
             ._data
             .symmetric_difference_len(&other.0.borrow()._data))
     }
+
+    /// Returns the number of integers that are <= value. rank(u32::MAX) == len(). This is also known as the rank or rank-select idiom.
+    fn rank(&self, item: u32) -> Result<u64, Error> {
+        Ok(self.0.borrow()._data.rank(item))
+    }
 }
 
 #[magnus::init]
@@ -178,6 +192,8 @@ fn init() -> Result<(), Error> {
     bitmap_class.define_method("insert", method!(MutWrapper::insert, 1))?;
     bitmap_class.define_alias("<<", "insert")?;
     bitmap_class.define_alias("push", "insert")?;
+
+    bitmap_class.define_method("insert_many", method!(MutWrapper::insert_many, -1))?;
 
     bitmap_class.define_method("remove", method!(MutWrapper::remove, 1))?;
     bitmap_class.define_alias("delete", "remove")?;
@@ -192,8 +208,8 @@ fn init() -> Result<(), Error> {
     bitmap_class.define_method("clear", method!(MutWrapper::clear, 0))?;
     bitmap_class.define_alias("reset", "clear")?;
 
-    bitmap_class.define_method("len", method!(MutWrapper::len, 0))?;
-    bitmap_class.define_alias("size", "len")?;
+    bitmap_class.define_method("length", method!(MutWrapper::len, 0))?;
+    bitmap_class.define_alias("size", "length")?;
 
     bitmap_class.define_method("empty?", method!(MutWrapper::is_empty, 0))?;
 
@@ -232,6 +248,8 @@ fn init() -> Result<(), Error> {
         "symmetric_difference_len",
         method!(MutWrapper::symmetric_difference_len, 1),
     )?;
+
+    bitmap_class.define_method("rank", method!(MutWrapper::rank, 1))?;
 
     Ok(())
 }

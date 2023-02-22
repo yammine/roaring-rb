@@ -58,7 +58,7 @@ class TestRoaringBitmap < Minitest::Test
     bitmap = Roaring::Bitmap.new
     bitmap.insert(1)
     bitmap.insert(2)
-    assert bitmap.len == 2
+    assert bitmap.length == 2
   end
 
   def test_empty?
@@ -223,5 +223,13 @@ class TestRoaringBitmap < Minitest::Test
     bitmap2.insert(2)
     bitmap2.insert(3)
     assert bitmap.symmetric_difference_len(bitmap2) == 2
+  end
+
+  def test_rank
+    bitmap = Roaring::Bitmap.new
+    bitmap.insert(1)
+    bitmap.insert(2)
+    bitmap.insert(3)
+    assert bitmap.rank(2) == 2
   end
 end
