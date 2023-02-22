@@ -21,7 +21,7 @@ class TestRoaringBitmap < Minitest::Test
 
   def test_insert_out_of_range
     bitmap = Roaring::Bitmap.new
-    assert_raises(RangeError) do 
+    assert_raises(RangeError) do
       bitmap.insert(2**64)
     end
   end
@@ -40,7 +40,7 @@ class TestRoaringBitmap < Minitest::Test
     assert bitmap.contains(2) == false
   end
 
-  def test_to_a 
+  def test_to_a
     bitmap = Roaring::Bitmap.new
     bitmap.insert(1)
     bitmap.insert(2)
@@ -185,7 +185,7 @@ class TestRoaringBitmap < Minitest::Test
 
     bitmap3 = Roaring::Bitmap.new
     bitmap3.insert(1)
-    bitmap - bitmap3
+    _diff = bitmap - bitmap3
     assert bitmap.to_a == []
   end
 
