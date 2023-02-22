@@ -27,3 +27,6 @@ jobs:
         rubygems: '3.4.7'
     - name: Run the default task
       run: bundle exec rake
+    - name: cross-gem
+      uses: oxidize-rb/cross-gem-action@v7
+
