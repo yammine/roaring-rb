@@ -232,4 +232,10 @@ class TestRoaringBitmap < Minitest::Test
     bitmap.insert(3)
     assert bitmap.rank(2) == 2
   end
+
+  def test_insert_many
+    bitmap = Roaring::Bitmap.new
+    bitmap.insert_many(1, 2, 3)
+    assert bitmap.to_a == [1, 2, 3]
+  end
 end

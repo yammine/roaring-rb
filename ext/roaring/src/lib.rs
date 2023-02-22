@@ -194,6 +194,7 @@ fn init() -> Result<(), Error> {
     bitmap_class.define_alias("push", "insert")?;
 
     bitmap_class.define_method("insert_many", method!(MutWrapper::insert_many, -1))?;
+    bitmap_class.define_alias("bulk_insert", "insert_many")?;
 
     bitmap_class.define_method("remove", method!(MutWrapper::remove, 1))?;
     bitmap_class.define_alias("delete", "remove")?;
