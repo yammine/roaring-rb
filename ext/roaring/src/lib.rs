@@ -1,26 +1,33 @@
-use magnus::{self as magnus, define_class, define_module, function, method, prelude::*, Error};
+use std::cell::RefCell;
 
-fn hello(subject: String) -> String {
-    format!("Hello from Rust, {}!", subject)
+use magnus::{define_module, function, method, prelude::*, Error};
+use roaring::RoaringBitmap;
+
+struct Wrapper {
+    _data: roaring::RoaringBitmap,
 }
 
-#[derive(Debug)]
-#[magnus::wrap(class = "Roaring::Bitmap", mark)]
-struct Bitmap {
-    data: roaring::RoaringBitmap,
-}
+#[magnus::wrap(class = "Roaring::Bitmap")]
 
-impl Bitmap {
+struct MutWrapper(RefCell<Wrapper>);
+
+impl MutWrapper {
     fn new() -> Self {
-        Self {
-            data: roaring::RoaringBitmap::new(),
-        }
+        Self(RefCell::new(Wrapper {
+            _data: RoaringBitmap::new(),
+        }))
+    }
+
+    fn insert(&self, item: u32) -> Result<bool, Error> {
+        Ok(self.0.borrow_mut()._data.insert(item))
     }
 }
 
 #[magnus::init]
 fn init() -> Result<(), Error> {
-    let bitmap_class = define_class("Roaring::Bitmap", Default::default())?;
-    bitmap_class.define_singleton_method("new", function!(Bitmap::new, 0))?;
+    let module = define_module("Roaring")?;
+    let bitmap_class = module.define_class("Bitmap", Default::default())?;
+    bitmap_class.define_singleton_method("new", function!(MutWrapper::new, 0))?;
+    bitmap_class.define_method("insert", method!(MutWrapper::insert, 1))?;
     Ok(())
 }

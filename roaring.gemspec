@@ -2,7 +2,7 @@
 require_relative "lib/roaring/version"
 
 Gem::Specification.new do |spec|
-  spec.name = "roaring-rb"
+  spec.name = "roaring"
   spec.version = Roaring::VERSION
   spec.authors = ["Chris Yammine"]
   spec.email = ["chris@yammine.dev"]

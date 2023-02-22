@@ -1,5 +1,5 @@
 [package]
-name = "roaring-rb"
+name = "roaring"
 version = "0.1.0"
 edition = "2021"
 authors = ["Chris Yammine <chris@yammine.dev>"]
