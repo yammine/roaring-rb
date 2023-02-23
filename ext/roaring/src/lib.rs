@@ -46,7 +46,8 @@ impl MutWrapper {
     fn insert_many(&self, items: &[Value]) -> Result<(), Error> {
         let args = scan_args::<(), (), RArray, (), (), ()>(items)?;
         let values = args.splat.to_vec::<u32>().unwrap();
-        Ok(self.0.borrow_mut()._data.extend(values))
+        self.0.borrow_mut()._data.extend(values);
+        Ok(())
     }
 
     /// Removes an item from the bitmap. Returns true if the item was present, false otherwise.
@@ -117,11 +118,11 @@ impl MutWrapper {
 
     /// Union the bitmap with another bitmap. Bitwise OR.
     fn union(&self, other: &Self) -> Result<(), Error> {
-        Ok(self
-            .0
+        self.0
             .borrow_mut()
             ._data
-            .bitor_assign(&other.0.borrow()._data))
+            .bitor_assign(&other.0.borrow()._data);
+        Ok(())
     }
 
     /// Computes the union of the bitmap with another bitmap and returns the cardinality of the result.
@@ -131,11 +132,11 @@ impl MutWrapper {
 
     /// Intersects the bitmap with another bitmap. Bitwise AND.
     fn intersection(&self, other: &Self) -> Result<(), Error> {
-        Ok(self
-            .0
+        self.0
             .borrow_mut()
             ._data
-            .bitand_assign(&other.0.borrow()._data))
+            .bitand_assign(&other.0.borrow()._data);
+        Ok(())
     }
 
     /// Computes the intersection of the bitmap with another bitmap and returns the cardinality of the result.
@@ -149,11 +150,11 @@ impl MutWrapper {
 
     /// A difference between the two bitmaps. Bitwise AND NOT.
     fn difference(&self, other: &Self) -> Result<(), Error> {
-        Ok(self
-            .0
+        self.0
             .borrow_mut()
             ._data
-            .sub_assign(&other.0.borrow()._data))
+            .sub_assign(&other.0.borrow()._data);
+        Ok(())
     }
 
     /// Computes the difference of the bitmap with another bitmap and returns the cardinality of the result.
@@ -167,11 +168,11 @@ impl MutWrapper {
 
     /// A symmetric difference between the two bitmaps. This is equivalent to the union of the two bitmaps minus the intersection. Bitwise XOR.
     fn symmetric_difference(&self, other: &Self) -> Result<(), Error> {
-        Ok(self
-            .0
+        self.0
             .borrow_mut()
             ._data
-            .bitxor_assign(&other.0.borrow()._data))
+            .bitxor_assign(&other.0.borrow()._data);
+        Ok(())
     }
 
     /// Computes the symmetric difference of the bitmap with another bitmap and returns the cardinality of the result.
