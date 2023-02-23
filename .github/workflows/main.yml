@@ -23,6 +23,7 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           rustup-toolchain: ${{ matrix.rust }}
+          rubygems: '3.4.7'
           bundler-cache: true
           cargo-cache: true
 
