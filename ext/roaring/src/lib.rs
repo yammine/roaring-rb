@@ -30,6 +30,13 @@ impl MutWrapper {
         }))
     }
 
+    fn from_array(array: RArray) -> Self {
+        let values = array.to_vec::<u32>().unwrap();
+        Self(RefCell::new(Wrapper {
+            _data: RoaringBitmap::from_iter(values),
+        }))
+    }
+
     /// Inserts an item into the bitmap. Returns true if the item was not already present, false otherwise.
     fn insert(&self, item: u32) -> Result<bool, Error> {
         Ok(self.0.borrow_mut()._data.insert(item))
@@ -188,6 +195,7 @@ fn init() -> Result<(), Error> {
     let bitmap_class = module.define_class("Bitmap", Default::default())?;
     bitmap_class.define_singleton_method("new", function!(MutWrapper::new, 0))?;
     bitmap_class.define_singleton_method("full", function!(MutWrapper::new_full, 0))?;
+    bitmap_class.define_singleton_method("from_array", function!(MutWrapper::from_array, 1))?;
 
     bitmap_class.define_method("insert", method!(MutWrapper::insert, 1))?;
     bitmap_class.define_alias("<<", "insert")?;
