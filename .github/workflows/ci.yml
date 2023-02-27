@@ -28,7 +28,7 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           rustup-toolchain: ${{ matrix.rust }}
           rubygems: '3.4.7'
-          bundler-cache: true
+          bundler-cache: false
           cargo-cache: true
 
       - name: Run ruby tests
