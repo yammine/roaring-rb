@@ -79,7 +79,6 @@ jobs:
           name: cross-gem
 
       - name: Push Gem
-        working-directory: pkg/
         env:
           GEM_HOST_API_KEY: ${{ secrets.RUBYGEMS_API_KEY }}
         run: |
