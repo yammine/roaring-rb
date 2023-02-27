@@ -128,13 +128,13 @@ class TestRoaringBitmap < Minitest::Test
     bitmap2 = Roaring::Bitmap.new
     bitmap2.insert(3)
     bitmap2.insert(4)
-    bitmap.union(bitmap2)
-    assert bitmap.to_a == [1, 2, 3, 4]
+    u = bitmap.union(bitmap2)
+    assert u.to_a == [1, 2, 3, 4]
 
     bitmap3 = Roaring::Bitmap.new
     bitmap3.insert(5)
-    bitmap | bitmap3
-    assert bitmap.to_a == [1, 2, 3, 4, 5]
+    u2 = bitmap | bitmap2 | bitmap3
+    assert u2.to_a == [1, 2, 3, 4, 5]
   end
 
   def test_union_len
@@ -154,13 +154,13 @@ class TestRoaringBitmap < Minitest::Test
     bitmap2 = Roaring::Bitmap.new
     bitmap2.insert(2)
     bitmap2.insert(3)
-    bitmap.intersection(bitmap2)
-    assert bitmap.to_a == [2]
+    int = bitmap.intersection(bitmap2)
+    assert int.to_a == [2]
 
     bitmap3 = Roaring::Bitmap.new
     bitmap3.insert(2)
-    bitmap & bitmap3
-    assert bitmap.to_a == [2]
+    int2 = bitmap & bitmap2 & bitmap3
+    assert int2.to_a == [2]
   end
 
   def test_intersection_len
@@ -180,13 +180,13 @@ class TestRoaringBitmap < Minitest::Test
     bitmap2 = Roaring::Bitmap.new
     bitmap2.insert(2)
     bitmap2.insert(3)
-    bitmap.difference(bitmap2)
-    assert bitmap.to_a == [1]
+    diff = bitmap.difference(bitmap2)
+    assert diff.to_a == [1]
 
     bitmap3 = Roaring::Bitmap.new
     bitmap3.insert(1)
-    _diff = bitmap - bitmap3
-    assert bitmap.to_a == []
+    diff2 = bitmap - bitmap2 - bitmap3
+    assert diff2.to_a == []
   end
 
   def test_difference_len
@@ -206,13 +206,13 @@ class TestRoaringBitmap < Minitest::Test
     bitmap2 = Roaring::Bitmap.new
     bitmap2.insert(2)
     bitmap2.insert(3)
-    bitmap.symmetric_difference(bitmap2)
-    assert bitmap.to_a == [1, 3]
+    sd = bitmap.symmetric_difference(bitmap2)
+    assert sd.to_a == [1, 3]
 
     bitmap3 = Roaring::Bitmap.new
     bitmap3.insert(3)
-    bitmap ^ bitmap3
-    assert bitmap.to_a == [1]
+    sd2 = bitmap ^ bitmap2 ^ bitmap3
+    assert sd2.to_a == [1]
   end
 
   def test_symmetric_difference_len
