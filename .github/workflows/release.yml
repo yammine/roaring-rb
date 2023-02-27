@@ -36,6 +36,7 @@ jobs:
       - uses: oxidize-rb/actions/setup-ruby-and-rust@v1
         with:
           ruby-version: "3.1"
+          rubygems: '3.4.7'
           bundler-cache: false
           cargo-cache: true
           cargo-vendor: true
@@ -61,6 +62,7 @@ jobs:
         - uses: oxidize-rb/actions/setup-ruby-and-rust@v1
           with:
             ruby-version: "3.1"
+            rubygems: '3.4.7'
             bundler-cache: true
             cargo-cache: true
             cache-version: v1
