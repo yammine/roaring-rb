@@ -27,9 +27,11 @@ jobs:
         with:
           ruby-version: ${{ matrix.ruby }}
           rustup-toolchain: ${{ matrix.rust }}
-          rubygems: '3.4.7'
+          rubygems: "3.4.7"
           bundler-cache: false
           cargo-cache: true
+          cargo-vendor: true
+          cache-version: v1-${{ matrix.ruby-platform }}
 
       - name: Run ruby tests
         run: bundle exec rake
