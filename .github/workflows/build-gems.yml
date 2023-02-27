@@ -43,7 +43,7 @@ jobs:
           cargo-vendor: true
           cache-version: v2-${{ matrix.platform }}
 
-      - uses: oxidize-rb/actions/cross-gem@v1
+      - uses: oxidize-rb/actions/cross-gem@v1.1.1
         id: cross-gem
         with:
           platform: ${{ matrix.platform }}
