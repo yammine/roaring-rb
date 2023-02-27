@@ -3,7 +3,7 @@
 require_relative "lib/roaring/version"
 
 Gem::Specification.new do |spec|
-  spec.name = "roaring"
+  spec.name = "roaring-rb"
   spec.version = Roaring::VERSION
   spec.authors = ["Chris Yammine"]
   spec.email = ["chris@yammine.dev"]
@@ -11,14 +11,14 @@ Gem::Specification.new do |spec|
   spec.summary = "Ruby bindings for the Roaring Bitmap library"
   spec.description = "Ruby bindings for the Roaring Bitmap library"
   spec.homepage = "https://github.com/yammine/roaring-rb"
-  spec.required_ruby_version = ">= 2.6.0"
+  spec.required_ruby_version = ">= 2.7.0"
   spec.required_rubygems_version = ">= 3.3.11"
 
   spec.metadata["allowed_push_host"] = "https://rubygems.org"
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/yammine/roaring-rb"
-  spec.metadata["changelog_uri"] = "https://github.com/yammine/roaring-rb/blob/master/CHANGELOG.md"
+  spec.metadata["changelog_uri"] = "https://github.com/yammine/roaring-rb"
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
