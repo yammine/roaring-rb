@@ -28,10 +28,10 @@ jobs:
           ruby-version: ${{ matrix.ruby }}
           rustup-toolchain: ${{ matrix.rust }}
           rubygems: "3.4.7"
-          bundler-cache: false
+          bundler-cache: true
           cargo-cache: true
           cargo-vendor: true
-          cache-version: v1-${{ matrix.ruby-platform }}
+          cache-version: v2-${{ matrix.ruby-platform }}
 
       - name: Run ruby tests
         run: bundle exec rake
