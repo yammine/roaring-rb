@@ -4,7 +4,8 @@ use std::{
 };
 
 use magnus::{
-    define_module, function, method, prelude::*, scan_args::scan_args, Error, RArray, Value,
+    block::*, define_module, function, method, prelude::*, scan_args::scan_args, Error, RArray,
+    Value,
 };
 use roaring::RoaringBitmap;
 
@@ -13,7 +14,6 @@ struct Wrapper {
 }
 
 #[magnus::wrap(class = "Roaring::Bitmap")]
-
 struct MutWrapper(RefCell<Wrapper>);
 
 impl MutWrapper {
@@ -186,6 +186,35 @@ impl MutWrapper {
     fn rank(&self, item: u32) -> Result<u64, Error> {
         Ok(self.0.borrow()._data.rank(item))
     }
+
+    fn each(&self) -> Result<(), Error> {
+        if block_given() {
+            let data = &self.0.borrow()._data;
+            let block = block_proc().unwrap();
+            for i in data.iter() {
+                let rparams = RArray::with_capacity(1);
+                rparams.push(i).unwrap();
+                match block.call::<RArray, Option<Value>>(rparams) {
+                    Ok(_) => {}
+                    Err(e) => {
+                        return Err(e);
+                    }
+                }
+            }
+
+            return Ok(());
+        } else {
+            // TODO: Figure out what I need to do to get this to return an Enumerator instead of an error.
+            return Err(Error::new(
+                magnus::exception::type_error(),
+                "no block given",
+            ));
+        }
+    }
+
+    fn byte_size(&self) -> Result<usize, Error> {
+        Ok(self.0.borrow()._data.serialized_size())
+    }
 }
 
 #[magnus::init]
@@ -194,7 +223,7 @@ fn init() -> Result<(), Error> {
     let bitmap_class = module.define_class("Bitmap", Default::default())?;
     bitmap_class.define_singleton_method("new", function!(MutWrapper::new, 0))?;
     bitmap_class.define_singleton_method("full", function!(MutWrapper::new_full, 0))?;
-    bitmap_class.define_singleton_method("from_array", function!(MutWrapper::from_array, 1))?;
+    bitmap_class.define_singleton_method("from_a", function!(MutWrapper::from_array, 1))?;
 
     bitmap_class.define_method("insert", method!(MutWrapper::insert, 1))?;
     bitmap_class.define_alias("<<", "insert")?;
@@ -258,6 +287,10 @@ fn init() -> Result<(), Error> {
     )?;
 
     bitmap_class.define_method("rank", method!(MutWrapper::rank, 1))?;
+
+    bitmap_class.define_method("each", method!(MutWrapper::each, 0))?;
+
+    bitmap_class.define_method("byte_size", method!(MutWrapper::byte_size, 0))?;
 
     Ok(())
 }

@@ -239,8 +239,16 @@ class TestRoaringBitmap < Minitest::Test
     assert bitmap.to_a == [1, 2, 3]
   end
 
-  def test_from_array
-    bitmap = Roaring::Bitmap.from_array([3, 2, 1])
+  def test_from_a
+    bitmap = Roaring::Bitmap.from_a([3, 2, 1])
     assert bitmap.to_a == [1, 2, 3]
+  end
+
+  def test_each
+    bitmap = Roaring::Bitmap.new
+    bitmap.insert_many(1, 2, 3)
+    ary = []
+    bitmap.each { |i| ary << i }
+    assert ary == [1, 2, 3]
   end
 end

@@ -1,5 +1,6 @@
 # frozen_string_literal: true
 
+require "set"
 require_relative "roaring/version"
 
 # Tries to require the extension for the given Ruby version first
@@ -12,5 +13,8 @@ end
 
 module Roaring
   class Error < StandardError; end
-  # Your code goes here...
+
+  class Bitmap
+    include Enumerable
+  end
 end
