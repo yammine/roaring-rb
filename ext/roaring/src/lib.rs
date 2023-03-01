@@ -4,8 +4,8 @@ use std::{
 };
 
 use magnus::{
-    block::*, define_module, function, method, prelude::*, scan_args::scan_args, Error, RArray,
-    Value,
+    block::*, define_module, function, method, prelude::*, scan_args::scan_args, typed_data::Obj,
+    Error, RArray, Value,
 };
 use roaring::RoaringBitmap;
 
@@ -187,9 +187,10 @@ impl MutWrapper {
         Ok(self.0.borrow()._data.rank(item))
     }
 
-    fn each(&self) -> Result<(), Error> {
+    fn each(rb_self: Obj<Self>) -> Result<Value, Error> {
         if block_given() {
-            let data = &self.0.borrow()._data;
+            let self_struct = rb_self.get();
+            let data = &self_struct.0.borrow()._data;
             let block = block_proc().unwrap();
             for i in data.iter() {
                 let rparams = RArray::with_capacity(1);
@@ -202,13 +203,9 @@ impl MutWrapper {
                 }
             }
 
-            return Ok(());
+            Ok(*rb_self)
         } else {
-            // TODO: Figure out what I need to do to get this to return an Enumerator instead of an error.
-            return Err(Error::new(
-                magnus::exception::type_error(),
-                "no block given",
-            ));
+            Ok(*rb_self.enumeratorize("each", ()))
         }
     }
 
