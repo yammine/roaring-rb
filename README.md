@@ -1,31 +1,81 @@
-# Roaring
+<div align="center">
+  <h1><code>roaring-rb</code></h1>
 
-TODO: Delete this and the text below, and describe your gem
+  <p>
+    <strong>Ruby embedding of
+    <a href="https://github.com/RoaringBitmap/roaring-rs">roaring-rs</a></strong>
+  </p>
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/roaring`. To experiment with that code, run `bin/console` for an interactive prompt.
+  <p>
+    <a href="https://github.com/yammine/roaring-rb/actions?query=workflow%3ACI">
+      <img src="https://github.com/yammine/roaring-rb/actions/workflows/ci.yml/badge.svg" alt="CI status"/>
+    </a>
+  </p>
+</div>
+
+## Goal
+
+`roaring-rb`'s goal is to expose the full power of Roaring Bitmaps in Ruby with minimal overhead.
 
 ## Installation
 
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
+Add the `roaring-rb` gem to your Gemfile and run `bundle install`:
 
-Install the gem and add to the application's Gemfile by executing:
+```ruby
+gem "roaring-rb"
+```
 
-    $ bundle add UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG
+Alternatively, you can install the gem manually:
 
-If bundler is not being used to manage dependencies, install the gem by executing:
+```sh
+gem install roaring-rb
+```
 
-    $ gem install UPDATE_WITH_YOUR_GEM_NAME_PRIOR_TO_RELEASE_TO_RUBYGEMS_ORG
+### Precompiled gems
+
+We recommend installing the `roaring-rb` precompiled gems available for Linux, macOS, and Windows. Installing a precompiled gem avoids the need to compile from source code, which is generally slower and less reliable.
+
+When installing the `roaring-rb` gem for the first time using `bundle install`, Bundler will automatically download the precompiled gem for your current platform. However, you will need to inform Bundler of any additional platforms you plan to use.
+
+To do this, lock your Bundle to the required platforms you will need from the list of supported platforms below:
+
+```sh
+bundle lock --add-platform x86_64-linux # Standard Linux (e.g. Heroku, GitHub Actions, etc.)
+bundle lock --add-platform x86_64-linux-musl # MUSL Linux deployments (i.e. Alpine Linux)
+bundle lock --add-platform aarch64-linux # ARM64 Linux deployments (i.e. AWS Graviton2)
+bundle lock --add-platform x86_64-darwin # Intel MacOS (i.e. pre-M1)
+bundle lock --add-platform arm64-darwin # Apple Silicon MacOS  (i.e. M1)
+bundle lock --add-platform x64-mingw-ucrt # Windows 
+bundle lock --add-platform x64-mingw32 # Different Windows?
+```
 
 ## Usage
 
-TODO: Write usage instructions here
+Example usage:
+
+```ruby
+require "roaring-rb"
+
+rb = Roaring::Bitmap.new
+
+rb.insert 1
+rb.insert 2
+rb.min # => 1
+rb.max # => 2
+
+rb.insert_many(5, 10, 100)
+rb.to_a # => [1, 2, 5, 10, 100]
+
+dump = rb.serialize
+loaded = Roaring::Bitmap.deserialize(dump)
+rb == loaded # => true
+```
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake test` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake` to compile & run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
-
+To install this gem onto your local machine, run `bundle exec rake install`. Version releases are automated by GH Actions.
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/roaring.
+Bug reports and pull requests are welcome on GitHub at https://github.com/yammine/roaring.
