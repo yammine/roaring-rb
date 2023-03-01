@@ -251,4 +251,11 @@ class TestRoaringBitmap < Minitest::Test
     bitmap.each { |i| ary << i }
     assert ary == [1, 2, 3]
   end
+
+  def test_each_with_no_block
+    bitmap = Roaring::Bitmap.new
+    bitmap.insert_many(1, 2, 3)
+    ary = bitmap.each.map { |i| i**2 }
+    assert ary == [1, 4, 9]
+  end
 end
