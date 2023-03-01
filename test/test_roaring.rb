@@ -258,4 +258,19 @@ class TestRoaringBitmap < Minitest::Test
     ary = bitmap.each.map { |i| i**2 }
     assert ary == [1, 4, 9]
   end
+
+  def test_eql?
+    bitmap = Roaring::Bitmap.new
+    bitmap.insert_many(1, 2, 3)
+    bitmap2 = Roaring::Bitmap.new
+    bitmap2.insert_many(1, 2, 3)
+    assert bitmap.eql?(bitmap2)
+  end
+
+  def test_serde
+    bitmap = Roaring::Bitmap.new
+    bitmap.insert_many(1, 2, 3)
+    bitmap2 = Marshal.load(Marshal.dump(bitmap))
+    assert bitmap.eql?(bitmap2)
+  end
 end

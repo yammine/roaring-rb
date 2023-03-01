@@ -1,6 +1,5 @@
 # frozen_string_literal: true
 
-require "set"
 require_relative "roaring/version"
 
 # Tries to require the extension for the given Ruby version first
@@ -16,5 +15,17 @@ module Roaring
 
   class Bitmap
     include Enumerable
+
+    def hash
+      to_a.hash
+    end
+
+    def self._load(args)
+      deserialize(args)
+    end
+
+    def _dump(_level)
+      serialize
+    end
   end
 end

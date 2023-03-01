@@ -5,7 +5,7 @@ use std::{
 
 use magnus::{
     block::*, define_module, function, method, prelude::*, scan_args::scan_args, typed_data::Obj,
-    Error, RArray, Value,
+    Error, RArray, RString, Value,
 };
 use roaring::RoaringBitmap;
 
@@ -212,6 +212,24 @@ impl MutWrapper {
     fn byte_size(&self) -> Result<usize, Error> {
         Ok(self.0.borrow()._data.serialized_size())
     }
+
+    fn eql(&self, other: &Self) -> Result<bool, Error> {
+        Ok(self.0.borrow()._data == other.0.borrow()._data)
+    }
+
+    fn serialize(&self) -> Result<RString, Error> {
+        let mut buf = vec![];
+        self.0.borrow()._data.serialize_into(&mut buf).unwrap();
+        Ok(RString::from_slice(&buf))
+    }
+
+    fn deserialize(rstr: RString) -> Result<Self, Error> {
+        unsafe {
+            let buf = rstr.as_slice();
+            let d = RoaringBitmap::deserialize_from(&mut &buf[..]).unwrap();
+            Ok(Self(RefCell::new(Wrapper { _data: d })))
+        }
+    }
 }
 
 #[magnus::init]
@@ -244,14 +262,18 @@ fn init() -> Result<(), Error> {
 
     bitmap_class.define_method("length", method!(MutWrapper::len, 0))?;
     bitmap_class.define_alias("size", "length")?;
+    bitmap_class.define_alias("count", "length")?;
+    bitmap_class.define_alias("cardinality", "length")?;
 
     bitmap_class.define_method("empty?", method!(MutWrapper::is_empty, 0))?;
 
     bitmap_class.define_method("full?", method!(MutWrapper::is_full, 0))?;
 
     bitmap_class.define_method("max", method!(MutWrapper::max, 0))?;
+    bitmap_class.define_alias("last", "max")?;
 
     bitmap_class.define_method("min", method!(MutWrapper::min, 0))?;
+    bitmap_class.define_alias("first", "min")?;
 
     bitmap_class.define_method("nth", method!(MutWrapper::select, 1))?;
 
@@ -288,6 +310,12 @@ fn init() -> Result<(), Error> {
     bitmap_class.define_method("each", method!(MutWrapper::each, 0))?;
 
     bitmap_class.define_method("byte_size", method!(MutWrapper::byte_size, 0))?;
+
+    bitmap_class.define_method("eql?", method!(MutWrapper::eql, 1))?;
+    bitmap_class.define_alias("==", "eql?")?;
+
+    bitmap_class.define_method("serialize", method!(MutWrapper::serialize, 0))?;
+    bitmap_class.define_singleton_method("deserialize", function!(MutWrapper::deserialize, 1))?;
 
     Ok(())
 }
