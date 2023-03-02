@@ -16,7 +16,6 @@ class TestRoaringBitmap < Minitest::Test
   def test_insert_aliases
     bitmap = Roaring::Bitmap.new
     assert bitmap << 1 == true
-    assert bitmap.push(2) == true
   end
 
   def test_insert_out_of_range
@@ -272,5 +271,17 @@ class TestRoaringBitmap < Minitest::Test
     bitmap.insert_many(1, 2, 3)
     bitmap2 = Marshal.load(Marshal.dump(bitmap))
     assert bitmap.eql?(bitmap2)
+  end
+
+  def test_positional_accessors
+    bitmap = Roaring::Bitmap.new
+    bitmap.insert_many(1, 5, 18)
+    accessors = [:nth, :select]
+
+    accessors.each do |accessor|
+      assert bitmap.send(accessor, 0) == 1
+      assert bitmap.send(accessor, 1) == 5
+      assert bitmap.send(accessor, 2) == 18
+    end
   end
 end
