@@ -230,14 +230,6 @@ checksum = "8c31b5c4033f8fdde8700e4657be2c497e7288f01515be52168c631e2e4d4086"
 
 [[package]]
 name = "roaring"
-version = "0.1.0"
-dependencies = [
- "magnus",
- "roaring 0.10.1",
-]
-
-[[package]]
-name = "roaring"
 version = "0.10.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ef0fb5e826a8bde011ecae6a8539dd333884335c57ff0f003fbe27c25bbe8f71"
@@ -245,6 +237,14 @@ dependencies = [
  "bytemuck",
  "byteorder",
  "retain_mut",
+]
+
+[[package]]
+name = "roaring_rb"
+version = "0.1.0"
+dependencies = [
+ "magnus",
+ "roaring",
 ]
 
 [[package]]

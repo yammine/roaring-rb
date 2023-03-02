@@ -5,9 +5,9 @@ require_relative "roaring/version"
 # Tries to require the extension for the given Ruby version first
 begin
   RUBY_VERSION =~ /(\d+\.\d+)/
-  require "roaring/#{Regexp.last_match(1)}/roaring"
+  require "roaring/#{Regexp.last_match(1)}/roaring_rb"
 rescue LoadError
-  require "roaring/roaring"
+  require "roaring/roaring_rb"
 end
 
 module Roaring
@@ -48,8 +48,6 @@ module Roaring
 
     alias_method :first, :min
     alias_method :last, :max
-
-    alias_method :select, :nth
 
     alias_method :==, :eql?
 

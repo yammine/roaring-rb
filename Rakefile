@@ -18,7 +18,7 @@ task build: :compile
 
 GEMSPEC = Gem::Specification.load("roaring.gemspec") || abort("Could not load oxi-test.gemspec")
 
-RbSys::ExtensionTask.new("roaring", GEMSPEC) do |ext|
+RbSys::ExtensionTask.new("roaring_rb", GEMSPEC) do |ext|
   ext.lib_dir = "lib/roaring"
 end
 

@@ -13,3 +13,6 @@ gem "rb_sys"
 gem "minitest", "~> 5.0"
 
 gem "standard", "~> 1.3"
+
+gem "yard", require: false
+gem "yard-rustdoc", "~> 0.3.2", require: false

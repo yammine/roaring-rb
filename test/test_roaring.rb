@@ -234,7 +234,7 @@ class TestRoaringBitmap < Minitest::Test
 
   def test_insert_many
     bitmap = Roaring::Bitmap.new
-    bitmap.insert_many(1, 2, 3)
+    bitmap.insert_many([1, 2, 3])
     assert bitmap.to_a == [1, 2, 3]
   end
 
@@ -245,7 +245,7 @@ class TestRoaringBitmap < Minitest::Test
 
   def test_each
     bitmap = Roaring::Bitmap.new
-    bitmap.insert_many(1, 2, 3)
+    bitmap.insert_many([1, 2, 3])
     ary = []
     bitmap.each { |i| ary << i }
     assert ary == [1, 2, 3]
@@ -253,30 +253,30 @@ class TestRoaringBitmap < Minitest::Test
 
   def test_each_with_no_block
     bitmap = Roaring::Bitmap.new
-    bitmap.insert_many(1, 2, 3)
+    bitmap.insert_many([1, 2, 3])
     ary = bitmap.each.map { |i| i**2 }
     assert ary == [1, 4, 9]
   end
 
   def test_eql?
     bitmap = Roaring::Bitmap.new
-    bitmap.insert_many(1, 2, 3)
+    bitmap.insert_many([1, 2, 3])
     bitmap2 = Roaring::Bitmap.new
-    bitmap2.insert_many(1, 2, 3)
+    bitmap2.insert_many([1, 2, 3])
     assert bitmap.eql?(bitmap2)
   end
 
   def test_serde
     bitmap = Roaring::Bitmap.new
-    bitmap.insert_many(1, 2, 3)
+    bitmap.insert_many([1, 2, 3])
     bitmap2 = Marshal.load(Marshal.dump(bitmap))
     assert bitmap.eql?(bitmap2)
   end
 
   def test_positional_accessors
     bitmap = Roaring::Bitmap.new
-    bitmap.insert_many(1, 5, 18)
-    accessors = [:nth, :select]
+    bitmap.insert_many([1, 5, 18])
+    accessors = [:nth]
 
     accessors.each do |accessor|
       assert bitmap.send(accessor, 0) == 1
