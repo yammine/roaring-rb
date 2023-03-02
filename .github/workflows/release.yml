@@ -19,7 +19,7 @@ jobs:
         id: fetch
         with:
           supported-ruby-platforms: |
-            exclude: []
+            exclude: [arm-linux] # 32-bit platforms are not supported by magnus
           stable-ruby-versions: |
             exclude: [head]
   build:
