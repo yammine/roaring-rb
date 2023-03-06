@@ -50,6 +50,7 @@ jobs:
     - uses: actions/configure-pages@v3
       with:
         enablement: true
+        token: ${{ secrets.GH_PAGES_CONFIG_TOKEN }}
     - uses: actions/upload-pages-artifact@v1
       with:
         path: "doc/"
