@@ -1,0 +1,56 @@
+---
+name: Deploy API docs to GitHub Pages
+
+on:
+  push:
+    branches: ['main']
+    paths:
+      - '.github/workflows/pages.yml'
+      - '.yardopts'
+      - 'lib/**'
+      - '**.gemspec'
+      - 'Gemfile'
+      - '**.md'
+      - '**.txt'
+    # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Allow one concurrent deployment
+concurrency:
+  group: 'pages'
+  cancel-in-progress: true
+
+jobs:
+  deploy_yard:
+    # the deploy environment (not to be confused with env)
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    name: Build and deploy YARD
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+    - uses: oxidize-rb/actions/setup-ruby-and-rust@v1
+      with:
+        ruby-version: "3.1"
+        rustup-toolchain: "nightly"
+        rubygems: "3.4.7"
+        bundler-cache: true
+        cargo-cache: true
+        cargo-vendor: true
+        cache-version: "v2-3.1"
+    - run: bundle exec rake doc
+      shell: bash
+    - uses: actions/configure-pages@v3
+    - uses: actions/upload-pages-artifact@v1
+      with:
+        # By default, upload the docs directory
+        path: ${{ inputs.output-dir }}
+    - id: deployment
+      uses: actions/deploy-pages@v1
