@@ -51,25 +51,7 @@ bundle lock --add-platform x64-mingw32 # Different Windows?
 
 ## Usage
 
-Example usage:
-
-```ruby
-require "roaring-rb"
-
-rb = Roaring::Bitmap.new
-
-rb.insert 1
-rb.insert 2
-rb.min # => 1
-rb.max # => 2
-
-rb.insert_many(5, 10, 100)
-rb.to_a # => [1, 2, 5, 10, 100]
-
-dump = rb.serialize
-loaded = Roaring::Bitmap.deserialize(dump)
-rb == loaded # => true
-```
+Lots of usage examples can be found [here](https://yammine.github.io/roaring-rb/).
 
 ## Development
 
