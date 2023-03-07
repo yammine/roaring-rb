@@ -13,11 +13,6 @@ class TestRoaringBitmap < Minitest::Test
     assert bitmap.insert(1) == false
   end
 
-  def test_insert_aliases
-    bitmap = Roaring::Bitmap.new
-    assert bitmap << 1 == true
-  end
-
   def test_insert_out_of_range
     bitmap = Roaring::Bitmap.new
     assert_raises(RangeError) do

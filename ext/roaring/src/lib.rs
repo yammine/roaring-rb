@@ -105,14 +105,20 @@ impl MutWrapper {
     ///
     /// @example Insert multiple items into the bitmap.
     ///     rb = Roaring::Bitmap.new
-    ///     rb.insert_many([1, 2, 3])
-    ///     rb.to_a     #=> [1, 2, 3]
+    ///     rb.insert_many([1, 2, 3])   #=> 3
+    ///     rb.to_a                     #=> [1, 2, 3]
     ///
-    /// @return [nil]
-    fn insert_many(&self, items: RArray) -> Result<(), Error> {
-        let values = items.to_vec::<u32>().unwrap();
-        self.0.borrow_mut()._data.extend(values);
-        Ok(())
+    /// @return [Integer] The number of items that were inserted.
+    fn insert_many(&self, items: RArray) -> Result<u32, Error> {
+        let values = items.to_vec::<u32>()?;
+        let mut inserted = 0;
+        for value in values {
+            if self.0.borrow_mut()._data.insert(value) {
+                inserted += 1;
+            }
+        }
+
+        Ok(inserted)
     }
 
     /// @yard
@@ -305,6 +311,8 @@ impl MutWrapper {
     ///
     /// Checks if the bitmaps are disjoint.
     ///
+    /// @param other [Roaring::Bitmap] The other bitmap to check.
+    ///
     /// @example When the bitmaps are disjoint.
     ///     rb1 = Roaring::Bitmap.new
     ///     rb1.insert_many([1, 2, 3])
@@ -328,6 +336,8 @@ impl MutWrapper {
     /// @def subset?(other)
     ///
     /// Checks if the bitmap is a subset of another bitmap.
+    ///
+    /// @param other [Roaring::Bitmap] The other bitmap.
     ///
     /// @example When the bitmap is a subset of another bitmap.
     ///     rb1 = Roaring::Bitmap.new
@@ -353,6 +363,8 @@ impl MutWrapper {
     ///
     /// Checks if the bitmap is a superset of another bitmap.
     ///
+    /// @param other [Roaring::Bitmap] The other bitmap.
+    ///
     /// @example When the bitmap is a superset of the other bitmap.
     ///     rb1 = Roaring::Bitmap.new
     ///     rb1.insert_many([1, 2, 3, 4, 5])
@@ -376,6 +388,8 @@ impl MutWrapper {
     /// @def union(other)
     ///
     /// Union the bitmap with another bitmap. Bitwise OR.
+    ///
+    /// @param other [Roaring::Bitmap] The other bitmap to union with.
     ///
     /// @example Unioning two bitmaps.
     ///     rb1 = Roaring::Bitmap.new
@@ -401,6 +415,8 @@ impl MutWrapper {
     /// Computes the union of the bitmap with another bitmap and returns the cardinality of the result.
     /// Useful for when you want to know the length of the result but not create a new bitmap.
     ///
+    /// @param other [Roaring::Bitmap] The bitmap to compute the union length with.
+    ///
     /// @example Computing the union length of two bitmaps.
     ///     rb1 = Roaring::Bitmap.new
     ///     rb1.insert_many([1, 2, 3])
@@ -417,6 +433,8 @@ impl MutWrapper {
     /// @def intersection(other)
     ///
     /// Intersects the bitmap with another bitmap. Bitwise AND.
+    ///
+    /// @param other [Roaring::Bitmap] The bitmap to intersect with.
     ///
     /// @example Intersecting two bitmaps.
     ///     rb1 = Roaring::Bitmap.new
@@ -442,6 +460,8 @@ impl MutWrapper {
     /// Computes the intersection of the bitmap with another bitmap and returns the cardinality of the result.
     /// Useful for when you want to know the length of the result but not create a new bitmap.
     ///
+    /// @param other [Roaring::Bitmap] The other bitmap compute the intersection length with.
+    ///
     /// @example Computing the intersection length of two bitmaps.
     ///     rb1 = Roaring::Bitmap.new
     ///     rb1.insert_many([1, 2, 3])
@@ -462,6 +482,8 @@ impl MutWrapper {
     /// @def difference(other)
     ///
     /// A difference between the two bitmaps. Bitwise AND NOT.
+    ///
+    /// @param other [Roaring::Bitmap] The other bitmap to compute the difference with.
     ///
     /// @example Computing the difference of two bitmaps.
     ///     rb1 = Roaring::Bitmap.new
@@ -487,6 +509,8 @@ impl MutWrapper {
     /// Computes the difference of the bitmap with another bitmap and returns the cardinality of the result.
     /// Useful for when you want to know the length of the result but not create a new bitmap.
     ///
+    /// @param [Roaring::Bitmap] other The other bitmap to compute the difference length with.
+    ///
     /// @example Computing the difference length of two bitmaps.
     ///     rb1 = Roaring::Bitmap.new
     ///     rb1.insert_many([1, 2, 3])
@@ -507,6 +531,8 @@ impl MutWrapper {
     /// @def symmetric_difference(other)
     ///
     /// A symmetric difference between the two bitmaps. This is equivalent to the union of the two bitmaps minus the intersection. Bitwise XOR.
+    ///
+    /// @param [Roaring::Bitmap] other The other bitmap to compute the symmetric difference with.
     ///
     /// @example Computing the symmetric difference of two bitmaps.
     ///     rb1 = Roaring::Bitmap.new
@@ -530,6 +556,8 @@ impl MutWrapper {
     ///
     /// Computes the symmetric difference of the bitmap with another bitmap and returns the cardinality of the result.
     /// Useful for when you want to know the length of the result but not create a new bitmap.
+    ///
+    /// @param [Roaring::Bitmap] other The other bitmap to compute the symmetric difference length with.
     ///
     /// @example Computing the symmetric difference length of two bitmaps.
     ///     rb1 = Roaring::Bitmap.new
@@ -633,6 +661,8 @@ impl MutWrapper {
     ///
     /// Checks if the bitmap is equal to another bitmap.
     ///
+    /// @param other [Roaring::Bitmap] The other bitmap to compare to.
+    ///
     /// @example Checking if two bitmaps are equal.
     ///     rb1 = Roaring::Bitmap.new
     ///     rb1.insert_many([1, 2, 3])
@@ -679,11 +709,9 @@ impl MutWrapper {
     ///
     /// @return [Roaring::Bitmap] The bitmap.
     fn deserialize(rstr: RString) -> Result<Self, Error> {
-        unsafe {
-            let buf = rstr.as_slice();
-            let d = RoaringBitmap::deserialize_from(&mut &buf[..]).unwrap();
-            Ok(Self(RefCell::new(Wrapper { _data: d })))
-        }
+        let buf = unsafe { rstr.as_slice() };
+        let d = RoaringBitmap::deserialize_from(&mut &buf[..]).unwrap();
+        Ok(Self(RefCell::new(Wrapper { _data: d })))
     }
 }
 
