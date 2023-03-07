@@ -51,7 +51,7 @@ bundle lock --add-platform x64-mingw32 # Different Windows?
 
 ## Usage
 
-Lots of usage examples can be found [here](https://yammine.github.io/roaring-rb/).
+Lots of usage examples can be found [in the documentation for Roaring::Bitmap](https://yammine.github.io/roaring-rb/Roaring/Bitmap.html).
 
 ## Development
 
