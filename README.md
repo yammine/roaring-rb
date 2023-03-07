@@ -60,4 +60,4 @@ After checking out the repo, run `bin/setup` to install dependencies. Then, run 
 To install this gem onto your local machine, run `bundle exec rake install`. Version releases are automated by GH Actions.
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/yammine/roaring.
+Bug reports and pull requests are welcome on GitHub at https://github.com/yammine/roaring-rb.
